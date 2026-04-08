@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeneTeranga</title>
+    <style>
+        /* Reset some default styles */
+        
+        .text-red {
+            color: red;
+        }
+        
+        .text-warning {
+            color: yellow;
+        }
+        
+        .text-success {
+            color: limegreen;
+        }
+        
+        text * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        /* Navigation Bar */
+        
+        nav {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        nav a:hover {
+            text-decoration: underline;
+        }
+        /* Hero Section */
+        
+        .hero {
+            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            color: white;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 5px;
+        }
+        /* Main Content */
+        
+        .datas-spaces {
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #333;
+        }
+        
+        .container {
+            max-width: 1100px;
+            height: 50vh;
+            margin: auto;
+            padding: 20px;
+            background: white;
+        }
+        /* Footer */
+        
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        /* Responsive Design */
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            nav {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">SeneTeranga</div>
+        <div>
+            <a href="#">Accueil</a>
+            <a href="#">A propos</a>
+            <a href="#">Services</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="text-success">Beacon Simulator</h1>
+    </section>
+    <main class="container">
+        <h2>A propos</h2>
+        <p>
+            ceci est un simple page web pour visualiser notre Simulateur de beacons
+        </p>
+        <hr>
+        <p>
+            <b>Statut: </b> <span id="status"></span>
+        </p>
+        <p>
+            <b>Données: </b>
+        </p>
+        <p id="donnees" class="datas-spaces">
+
+        </p>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SeneTeranga. All rights reserved.</p>
+    </footer>
+    <script>
+        var server_statut = document.querySelector("#status")
+        var datas = document.querySelector("#donnees")
+
+        serveur_ble = new WebSocket("ws://127.0.0.1:5200")
+        serveur_ble.onopen = () => {
+
+            server_statut.textContent = " Connexion etablie !"
+            server_statut.classList.add("text-success")
+        }
+
+        serveur_ble.onmessage = (event) => {
+
+            let data = JSON.parse(event.data)
+
+            datas.textContent = JSON.stringify(data, null, 2)
+        }
+        serveur_ble.onerror = () => {
+            server_statut.textContent = "Une erreur est survenue"
+            server_statut.classList.add("text-warning")
+        }
+        serveur_ble.onclose = () => {
+            server_statut.textContent = "La connexion à été perdue !"
+            server_statut.classList.add("text-red")
+        }
+    </script>
+
+</body>
+
+</html>
