@@ -149,7 +149,7 @@
         var server_statut = document.querySelector("#status")
         var datas = document.querySelector("#donnees")
 
-        serveur_ble = new WebSocket("ws://127.0.0.1:5200")
+        const serveur_ble = new WebSocket("ws://127.0.0.1:5200")
         serveur_ble.onopen = () => {
 
             server_statut.textContent = " Connexion etablie !"
@@ -162,13 +162,16 @@
 
             datas.textContent = JSON.stringify(data, null, 2)
         }
-        serveur_ble.onerror = () => {
-            server_statut.textContent = "Une erreur est survenue"
-            server_statut.classList.add("text-warning")
+        serveur_ble.onerror = (erreur) => {
+            server_statut.textContent = "Une erreur est survenue !"
+            server_statut.classList.add("text-red")
+            server_statut.classList.remove("text-success")
+            console.log(erreur)
         }
         serveur_ble.onclose = () => {
             server_statut.textContent = "La connexion à été perdue !"
             server_statut.classList.add("text-red")
+            server_statut.classList.remove("text-success")
         }
     </script>
 

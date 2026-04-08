@@ -51,12 +51,14 @@ def beacon_simulator_server_websocket(host='127.0.1.1', port=5200):
                 data = json.dumps(beacons)
                 await websocket.send(data)
                 await asyncio.sleep(2)
+        except websockets.exceptions.ConnectionClosed:
+            print(f"Client deconnecté !")
         except Exception as e:
-            print(f"Client deconnecté !{e}")
+            print(f"Une erreur est survenue !{e}")
         
     async def main():
         async with websockets.serve(handler, host, port):
-            print(f"server is listenning ind ws://127.0.0.1:5200")
+            print(f"server is listenning ind ws://{host}:{port}")
             await asyncio.Future()
 
     asyncio.run(main())
@@ -74,4 +76,4 @@ async def beacon_simulator_bluetooth():
     publisher.advertisement.data_sections.append(section)
     publisher.start()
 
-asyncio.run(beacon_simulator_bluetooth())
+beacon_simulator_server_websocket()
