@@ -55,13 +55,28 @@
         /* Hero Section */
         
         .hero {
-            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            background: url('./back.jpg') no-repeat center center/cover;
             color: white;
             height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+        }
+        
+        .beacon {
+            background-color: red;
+            height: 20px;
+            margin-bottom: 10px;
+            text-align: center;
+            align-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .visualization {
+            min-width: 200px;
+            margin-bottom: 10;
         }
         
         .hero h1 {
@@ -80,7 +95,6 @@
         
         .container {
             max-width: 1100px;
-            height: 50vh;
             margin: auto;
             padding: 20px;
             background: white;
@@ -130,6 +144,7 @@
             ceci est un simple page web pour visualiser notre Simulateur de beacons
         </p>
         <hr>
+
         <p>
             <b>Statut: </b> <span id="status"></span>
         </p>
@@ -139,6 +154,13 @@
         <p id="donnees" class="datas-spaces">
 
         </p>
+        <hr>
+        <h1>visualization</h1>
+        <div class="visualization">
+            <div class="beacon">
+
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -148,19 +170,28 @@
     <script>
         var server_statut = document.querySelector("#status")
         var datas = document.querySelector("#donnees")
-
-        const serveur_ble = new WebSocket("ws://127.0.0.1:5200")
+        var vues = document.querySelector(".visualization")
+        const host = window.location.hostname
+        const serveur_ble = new WebSocket("ws://" + host + ":5200")
         serveur_ble.onopen = () => {
-
             server_statut.textContent = " Connexion etablie !"
             server_statut.classList.add("text-success")
         }
-
         serveur_ble.onmessage = (event) => {
-
+            vues.replaceChildren()
             let data = JSON.parse(event.data)
-
-            datas.textContent = JSON.stringify(data, null, 2)
+                // data.sort((a, b) => a["rssi"] - b["rssi"])
+            showDatas(data)
+            datas.replaceChildren()
+            data.forEach((element, i) => {
+                beacons = document.createElement('dl')
+                beacon = document.createElement('dt')
+                beacon_rssi = document.createElement('dd')
+                beacon_rssi.innerHTML = "<b>Beacon N°" + element["id"] + "(" + element["major"] + ":" + element["minor"] + "): </b> " + element["rssi"] + "/" + element["txpower"]
+                beacons.appendChild(beacon)
+                beacons.appendChild(beacon_rssi)
+                datas.appendChild(beacons)
+            });
         }
         serveur_ble.onerror = (erreur) => {
             server_statut.textContent = "Une erreur est survenue !"
@@ -172,6 +203,16 @@
             server_statut.textContent = "La connexion à été perdue !"
             server_statut.classList.add("text-red")
             server_statut.classList.remove("text-success")
+        }
+
+        function showDatas(datas) {
+            datas.forEach((element, i) => {
+                let new_child = document.createElement('div')
+                new_child.classList.add("beacon")
+                new_child.style.width = (400 + (element["rssi"]) * 2) + "px"
+                new_child.textContent = "Beacon N°" + element["id"] + "  " + element["rssi"] + "/" + element["rssi"]
+                vues.appendChild(new_child)
+            });
         }
     </script>
 

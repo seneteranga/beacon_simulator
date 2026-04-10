@@ -1,5 +1,7 @@
 
 import random as rnd
+import datetime
+import os
 import json
 import time
 from winrt.windows.devices.bluetooth.advertisement import BluetoothLEAdvertisementPublisher, BluetoothLEAdvertisementDataSection
@@ -14,13 +16,14 @@ from bleak import BleakClient
 def generate_beacons(n:int, type: str):
     return [
              {   
+            'id':i+1,
             'uuid':'jkhziuzuiiziuehd',
             'major':1,
             'minor':rnd.choice([1,2,3,4]),
             'txpower':-49,
             'rssi': rnd.randint(-30, 20)
             }
-            for _ in range(n)
+            for i in range(n)
     ]
 
 def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
@@ -29,7 +32,6 @@ def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
             ble_server.bind((host, port))
             ble_server.listen(1)
             print(f"server is listenning in {host}:{port}")
-
             conn, adrr = ble_server.accept()
             with conn:
                 while True:
@@ -40,27 +42,27 @@ def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
                     time.sleep(2)
     except Exception as e:
         print(f"ble_server error: {e} ")
-
-def beacon_simulator_server_websocket(host='127.0.1.1', port=5200):
-
+def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
     async def handler(websocket):
-
         try:
             while True:
                 beacons = generate_beacons(5, 'ibeacons')
                 data = json.dumps(beacons)
+                client_ip, client_port = websocket.remote_address
                 await websocket.send(data)
                 await asyncio.sleep(2)
-        except websockets.exceptions.ConnectionClosed:
-            print(f"Client deconnecté !")
+                os.system('cls')
+                print(f"Server ws://{host}:{port} ....")
+                print(f"Client Connecté depuis: {client_ip}:{client_port} !")
+                print(f"{datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")} ...")
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"Client deconnecté !{e}")
         except Exception as e:
             print(f"Une erreur est survenue !{e}")
-        
     async def main():
         async with websockets.serve(handler, host, port):
             print(f"server is listenning ind ws://{host}:{port}")
             await asyncio.Future()
-
     asyncio.run(main())
 
 async def beacon_simulator_bluetooth():
