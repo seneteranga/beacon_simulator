@@ -41,7 +41,7 @@ def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
     except Exception as e:
         print(f"ble_server error: {e} ")
 
-def beacon_simulator_server_websocket(host='127.0.1.1', port=5200):
+def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
 
     async def handler(websocket):
 
@@ -50,6 +50,8 @@ def beacon_simulator_server_websocket(host='127.0.1.1', port=5200):
                 beacons = generate_beacons(5, 'ibeacons')
                 data = json.dumps(beacons)
                 await websocket.send(data)
+                print(f"Client Connecté !")
+
                 await asyncio.sleep(2)
         except websockets.exceptions.ConnectionClosed:
             print(f"Client deconnecté !")
