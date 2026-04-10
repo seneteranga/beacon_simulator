@@ -44,7 +44,6 @@ def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
 def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
 
     async def handler(websocket):
-
         try:
             while True:
                 beacons = generate_beacons(5, 'ibeacons')
