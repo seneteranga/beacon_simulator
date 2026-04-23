@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -146,6 +146,10 @@
     <section class="hero">
         <h1 class="text-success">Beacon Simulator</h1>
     </section>
+
+    <!-- <section class="hero">
+        <video id="mycamm" width="500" height="200" autoplay></video>
+    </section> -->
     <main class="container">
         <h2>A propos</h2>
         <p>
@@ -179,26 +183,45 @@
         <p>&copy; 2026 SeneTeranga. All rights reserved.</p>
     </footer>
     <script>
+        // navigator.mediaDevices.getUserMedia({ video: true }).then(
+        //     function (stream) {
+        //         var video = document.querySelector("#mycamm")
+        //         video.srcObject = stream
+        //     }
+        // ).catch(
+        //     function (erreur) {
+        //         console.log(erreur)
+        //     }
+        // )
+
         var server_statut = document.querySelector("#status")
-        var datas = document.querySelector("#donnees")
         var vues = document.querySelector(".visualization")
         const host = window.location.hostname
         const serveur_ble = new WebSocket("ws://" + host + ":5200")
+        var datas = document.querySelector("#donnees")
+        function showDatas(datas) {
+            datas.forEach((element, i) => {
+                let new_child = document.createElement('div')
+                new_child.classList.add("beacon")
+                new_child.style.width = (400 + (element["rssi"]) * 2) + "px"
+                new_child.textContent = "Beacon N°" + element["id"] + "  " + element["rssi"] + "/" + element["rssi"]
+                vues.appendChild(new_child)
+            });
+        }
         serveur_ble.onopen = () => {
             server_statut.textContent = " Connexion etablie !"
             server_statut.classList.add("text-success")
         }
         serveur_ble.onmessage = (event) => {
             vues.replaceChildren()
-            let data = JSON.parse(event.data)
-            // data.sort((a, b) => a["rssi"] - b["rssi"])
+            let data = JSON.parse(event.data) // data.sort((a, b) => a["rssi"] - b["rssi"])
             showDatas(data)
             datas.replaceChildren()
             data.forEach((element, i) => {
-                beacons = document.createElement('dl')
                 beacon = document.createElement('dt')
                 beacon_rssi = document.createElement('dd')
                 beacon_rssi.innerHTML = "<b>Beacon N°" + element["id"] + "(" + element["major"] + ":" + element["minor"] + "): </b> " + element["rssi"] + "/" + element["txpower"]
+                beacons = document.createElement('dl')
                 beacons.appendChild(beacon)
                 beacons.appendChild(beacon_rssi)
                 datas.appendChild(beacons)
@@ -216,15 +239,7 @@
             server_statut.classList.remove("text-success")
         }
 
-        function showDatas(datas) {
-            datas.forEach((element, i) => {
-                let new_child = document.createElement('div')
-                new_child.classList.add("beacon")
-                new_child.style.width = (400 + (element["rssi"]) * 2) + "px"
-                new_child.textContent = "Beacon N°" + element["id"] + "  " + element["rssi"] + "/" + element["rssi"]
-                vues.appendChild(new_child)
-            });
-        }
+
     </script>
 
 </body>
