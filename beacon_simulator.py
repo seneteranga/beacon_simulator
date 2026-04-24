@@ -55,10 +55,10 @@ def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
 def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
     async def handler(websocket):
         path = websocket.request.path
+        allbeacons= generate_beacons(5, 'ibeacons')
         try:        
             if path == '/scan' :   
                 n = rnd.choice([3, 4, 5, 2])
-                allbeacons= generate_beacons(5, 'ibeacons')
                 rnd.shuffle(allbeacons)
                 beacons = []
                 for i in range(n):
@@ -68,7 +68,7 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
                 ip_client, port_client = websocket.remote_address                
                 os.system("cls")
                 print(f"Serveur {host}:{port}")
-                print(f"Appareil Scanner depuis {ip_client}:{port_client}....")
+                print(f"Appareil Scanner connecté {ip_client}:{port_client}....")
                 print(f"{datetime.now()} ....")
             elif path == '/stream':
                 while True:
@@ -83,7 +83,7 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
                     ip_client, port_client = websocket.remote_address                
                     os.system("cls")
                     print(f"Serveur {host}:{port}")
-                    print(f"Appareil connecté depuis {ip_client}:{port_client}....")
+                    print(f"Appareil streamer connecté: {ip_client}:{port_client}....")
                     print(f"{datetime.now()} ....")
                     await asyncio.sleep(1)
             else:
@@ -91,9 +91,7 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
                 params = parse_qs(urls_args.query)
                 id= params.get('b', [None])[0]
                 print(id)
-                beacons = generate_beacons()
-                print(beacons)
-                beacon = get_beacon(beacons, int(id))
+                beacon = get_beacon(allbeacons, int(id))
                 print(beacon)
                 if id:
                     while True:
@@ -104,7 +102,7 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
                         ip_client, port_client = websocket.remote_address                
                         os.system("cls")
                         print(f"Serveur {host}:{port}")
-                        print(f"Appareil connecté depuis {ip_client}:{port_client}....")
+                        print(f"Appareil streamer connecté {ip_client}:{port_client}....")
                         print(f"{datetime.now()} ....")
                         await asyncio.sleep(1)            
                 pass
