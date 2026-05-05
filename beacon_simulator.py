@@ -26,12 +26,10 @@ def generate_beacons(n:int=5, type: str=''):
             }
             for i in range(n)
     ]
-
 def get_beacon(beacons, id):
     for beacon in beacons:
         if(beacon['id']==id):
             return beacon
-
 def beacon_simulator_server_tcp(host='127.0.0.1', port=5200):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ble_server:
@@ -58,7 +56,7 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
         allbeacons= generate_beacons(5, 'ibeacons')
         try:        
             if path == '/scan' :   
-                n = rnd.choice([3, 4, 5, 2])
+                n = rnd.choice([3, 4, 5, 2])  
                 rnd.shuffle(allbeacons)
                 beacons = []
                 for i in range(n):
@@ -116,7 +114,6 @@ def beacon_simulator_server_websocket(host='127.0.0.1', port=5200):
             await asyncio.Future()
 
     asyncio.run(main())
-
 async def beacon_simulator_bluetooth():
     publisher = BluetoothLEAdvertisementPublisher()
     writer = DataWriter()

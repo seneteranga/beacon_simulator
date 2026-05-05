@@ -197,7 +197,7 @@
         var server_statut = document.querySelector("#status")
         var vues = document.querySelector(".visualization")
         const host = window.location.hostname
-        const serveur_ble = new WebSocket("ws://" + host + ":5200")
+        const serveur_ble = new WebSocket("ws://" + host + ":5200/stream")
         var datas = document.querySelector("#donnees")
         function showDatas(datas) {
             datas.forEach((element, i) => {
